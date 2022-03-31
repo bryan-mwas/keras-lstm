@@ -50,13 +50,15 @@ def rainfall_forecast():
     scaled_input = scale_transform(a)
     X_scaled = reshape_scaled_x_for_prediction(scaled_df=scaled_input)
     y_pred = model.predict(X_scaled)
-    rainfall_forecast = (rescale_y_pred(y_pred)[:, -1]).tolist
-    return jsonify(rainfall_forecast)
+    rainfall_forecast = (rescale_y_pred(y_pred)[:, -1]).tolist()
+    human_readable_forecast = weather.build_human_readable_forecast(
+        rainfall_forecast)
+    return jsonify(human_readable_forecast)
 
 
 @app.route('/past-weather', methods=['GET'])
 def get_past_weather():
-    return jsonify(weather.get_ndarray_weather())
+    return jsonify(weather.get_ndarray_weather().tolist())
 
 
 if __name__ == '__main__':
