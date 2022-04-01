@@ -7,7 +7,7 @@ latitude = -1.5177
 longitude = 37.2634
 end_date = datetime.date.today() - datetime.timedelta(3)
 end_date_str = (end_date).strftime("%Y%m%d")
-weather_params = 'T2M,WS10M,QV2M,PRECTOTCORR'
+weather_params = 'T2M,PS,WS10M,QV2M,PRECTOTCORR'
 
 
 def get_weather_json(lookback_days):
@@ -19,8 +19,8 @@ def get_weather_json(lookback_days):
     return data_json
 
 
-def get_ndarray_weather():
-    data_json = get_weather_json(27)
+def get_ndarray_weather(lookback_days):
+    data_json = get_weather_json(lookback_days - 1)
     weather_param_values = data_json['properties']['parameter']
 
     response = []
@@ -38,7 +38,7 @@ def get_ndarray_weather():
 
 def build_human_readable_forecast(forecasts):
     forecast_dates = np.array(
-        [(end_date + datetime.timedelta(days=i)).strftime('%d-%m-%Y') for i in range(len(forecasts))])
+        [(end_date + datetime.timedelta(days=i+1)).strftime('%d-%m-%Y') for i in range(len(forecasts))])
 
     human_readable_forecast = []
 
