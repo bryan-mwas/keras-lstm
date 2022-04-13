@@ -1,8 +1,9 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import weather
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route('/forecast', methods=['GET'])
 def rainfall_forecast():
