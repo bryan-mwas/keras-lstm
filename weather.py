@@ -12,8 +12,6 @@ model = keras.models.load_model('rainfall-model-30-day')
 look_back_steps = 60
 no_of_features = 4
 
-latitude = -1.5177
-longitude = 37.2634
 end_date = datetime.date.today() - datetime.timedelta(3)
 end_date_str = (end_date).strftime("%Y%m%d")
 weather_params = 'T2M,PS,WS10M,QV2M,PRECTOTCORR'
@@ -43,7 +41,7 @@ def reshape_scaled_x_for_prediction(scaled_df):
     return X.reshape(x_shape)
 
 
-def get_weather_json(lookback_days):
+def get_weather_json(lookback_days, latitude, longitude):
     start_date_str = (
         end_date - datetime.timedelta(lookback_days)).strftime("%Y%m%d")
     url = f'https://power.larc.nasa.gov/api/temporal/daily/point?start={start_date_str}&end={end_date_str}&latitude={latitude}&longitude={longitude}&parameters={weather_params}&community=AG'
@@ -52,8 +50,8 @@ def get_weather_json(lookback_days):
     return data_json
 
 
-def get_ndarray_weather(lookback_days):
-    data_json = get_weather_json(lookback_days - 1)
+def get_ndarray_weather(lookback_days, lat, lng):
+    data_json = get_weather_json(lookback_days - 1, latitude=lat, longitude=lng)
     weather_param_values = data_json['properties']['parameter']
 
     response = []
@@ -84,9 +82,9 @@ def build_human_readable_forecast(forecasts):
     return human_readable_forecast
 
 
-def forecast_rainfall():
+def forecast_rainfall(lat, lng):
     weather_ndarray = get_ndarray_weather(
-        lookback_days=look_back_steps)
+        lookback_days=look_back_steps, lat=lat, lng=lng)
     scaled_data = scale_transform(weather_ndarray)
     X_scaled = reshape_scaled_x_for_prediction(scaled_df=scaled_data)
     y_pred = model.predict(X_scaled)
