@@ -4,6 +4,7 @@ import datetime
 import numpy as np
 from tensorflow import keras
 from urllib.request import urlopen
+from sklearn.preprocessing import MinMaxScaler
 
 import weather
 
